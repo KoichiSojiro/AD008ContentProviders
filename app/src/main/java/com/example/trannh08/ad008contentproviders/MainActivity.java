@@ -22,10 +22,10 @@ public class MainActivity extends AppCompatActivity {
     public void onClickAddName(View view) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(StudentsProvider.NAME,
-                ((EditText) findViewById(R.id.editText2)).getText().toString());
+                ((EditText) findViewById(R.id.editText_name)).getText().toString());
 
         contentValues.put(StudentsProvider.GRADE,
-                ((EditText) findViewById(R.id.editText3)).getText().toString());
+                ((EditText) findViewById(R.id.editText_grade)).getText().toString());
 
         Uri uri = getContentResolver().insert(
                 StudentsProvider.CONTENT_URI, contentValues);
@@ -36,28 +36,25 @@ public class MainActivity extends AppCompatActivity {
 
     public void onClickRetrieveStudents(View view) {
         // Retrieve student records
-        String studentName = ((EditText) findViewById(R.id.editText2)).getText().toString();
-        String studentGrade = ((EditText) findViewById(R.id.editText3)).getText().toString();
+        String studentName = ((EditText) findViewById(R.id.editText_name)).getText().toString();
+        String studentGrade = ((EditText) findViewById(R.id.editText_grade)).getText().toString();
+        if (studentName.isEmpty() || studentName.equals(null))
+            studentName = "%";
+        if (studentGrade.isEmpty() || studentGrade.equals(null))
+            studentGrade = "%";
 
         String URL = "content://com.example.trannh08.ad008contentproviders.School/students";
         Uri students = Uri.parse(URL);
 
-        String [] requestedColumns = {
+        String[] requestedColumns = {
                 StudentsProvider.ID,
                 StudentsProvider.NAME,
                 StudentsProvider.GRADE
         };
-        String condition = null;
-        if(studentName != null && studentGrade != null) {
-            condition = StudentsProvider.NAME + "=? and " + StudentsProvider.GRADE + "=?";
-        } else if(studentName != null && studentGrade == null) {
-            condition = StudentsProvider.NAME + "=?";
-        }else if(studentName == null && studentGrade != null) {
-            condition = StudentsProvider.GRADE + "=?";
-        }
+        String condition = StudentsProvider.NAME + " like ? and " + StudentsProvider.GRADE + " like ?";
         String[] condition_args = {
-                ((EditText) findViewById(R.id.editText2)).getText().toString(),
-                ((EditText) findViewById(R.id.editText3)).getText().toString()
+                studentName,
+                studentGrade
         };
         String sortOrder = StudentsProvider.ID + " desc";
         Cursor cursor = getContentResolver().query(students, requestedColumns, condition, condition_args, sortOrder);
@@ -65,9 +62,9 @@ public class MainActivity extends AppCompatActivity {
         if (cursor.moveToFirst()) {
             do {
                 Toast.makeText(this,
-                        cursor.getString(cursor.getColumnIndex(StudentsProvider.ID)) +
-                                ", " + cursor.getString(cursor.getColumnIndex(StudentsProvider.NAME)) +
-                                ", " + cursor.getString(cursor.getColumnIndex(StudentsProvider.GRADE)),
+                        StudentsProvider.ID + "=" + cursor.getString(cursor.getColumnIndex(StudentsProvider.ID)) +
+                                ", \n" + StudentsProvider.NAME + "=" + cursor.getString(cursor.getColumnIndex(StudentsProvider.NAME)) +
+                                ", \n" + StudentsProvider.GRADE + "=" + cursor.getString(cursor.getColumnIndex(StudentsProvider.GRADE)),
                         Toast.LENGTH_SHORT).show();
             } while (cursor.moveToNext());
         }
