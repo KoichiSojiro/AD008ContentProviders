@@ -11,10 +11,15 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!--DO NOT FORGET TO DECLARE PROVIDER-->
+        <!--[authorities] section is the same with [PROVIDER_NAME] in [StudentsProvider.java]-->
+        <provider android:name=".utils.StudentsProvider"
+            android:authorities="com.example.trannh08.ad008contentproviders.School">
+        </provider>
     </application>
 
 </manifest>
